@@ -110,5 +110,3 @@ module LazyHighCharts
     
   end
 end
-
-ActionView::Base.send :include, LazyHighCharts::LayoutHelper
