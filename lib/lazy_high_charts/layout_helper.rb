@@ -1,5 +1,17 @@
 # coding: utf-8
 
+class String
+  def camelize(term, uppercase_first_letter = true)
+    string = term.to_s
+    if uppercase_first_letter then
+      string = string.sub(%r{^[a-z\d]*}) { inflections.acronyms[$&] || $&.capitalize }
+    else
+      string = string.sub(%r{^(?:#{inflections.acronym_regex}(?=\b|[A-Z_])|\w)}) { $&.downcase }
+    end
+    string.gsub(%r{(?:_|(\/))([a-z\d]*)}) { "#{$1}#{inflections.acronyms[$2] || $2.capitalize}" }.gsub('/', '::')
+  end
+end
+
 module LazyHighCharts
   module LayoutHelper
 
