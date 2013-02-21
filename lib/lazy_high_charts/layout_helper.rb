@@ -3,11 +3,11 @@
 class String
   def camelize(uppercase_first_letter = true)
     if uppercase_first_letter then
-      this.sub!(%r{^[a-z\d]*}) { inflections.acronyms[$&] || $&.capitalize }
+      self.sub!(%r{^[a-z\d]*}) { inflections.acronyms[$&] || $&.capitalize }
     else
-      this.sub!(%r{^(?:#{inflections.acronym_regex}(?=\b|[A-Z_])|\w)}) { $&.downcase }
+      self.sub!(%r{^(?:#{inflections.acronym_regex}(?=\b|[A-Z_])|\w)}) { $&.downcase }
     end
-    this.gsub!(%r{(?:_|(\/))([a-z\d]*)}) { "#{$1}#{inflections.acronyms[$2] || $2.capitalize}" }.gsub!('/', '::')
+    self.gsub!(%r{(?:_|(\/))([a-z\d]*)}) { "#{$1}#{inflections.acronyms[$2] || $2.capitalize}" }.gsub!('/', '::')
   end
 end
 
