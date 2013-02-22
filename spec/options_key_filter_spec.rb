@@ -17,7 +17,7 @@ describe LazyHighCharts::OptionsKeyFilter do
     end
 
     it "should be js_code" do
-      @value.js_code.should be_true
+      @value.js_code?.should be_true
     end
   end
 

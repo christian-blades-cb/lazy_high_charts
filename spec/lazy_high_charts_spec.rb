@@ -48,7 +48,7 @@ describe HighChartsHelper do
       end
 
       it "should set chart renderTo" do
-        high_chart(@placeholder, @chart).should match(/"renderTo": "placeholder"/)
+        high_chart(@placeholder, @chart).should match(/"renderTo":"placeholder"/)
       end
 
       it "should set Chart Stock" do
@@ -64,7 +64,7 @@ describe HighChartsHelper do
       f.options[:rangeSelector] = {:selected=>1}; 
       f.series(:type         =>"spline",
                :name          =>"Historias",
-               :pointInterval =>  (1.day.to_i * 1000) ,
+               :pointInterval =>  (3600 * 24 * 1000),
                :pointStart    =>  (Time.now.to_i * 1000),
                :data          =>  [0,1,2,3,5,6,0,7]
               )
@@ -90,7 +90,7 @@ describe HighChartsHelper do
       f.options[:foo] = "function () { alert('hello') }".js_code
     }
   
-    high_chart(@placeholder, chart).should match(/"foo": function \(\) { alert\('hello'\) }/)    
+    high_chart(@placeholder, chart).should match(/"foo":function \(\) { alert\('hello'\) }/)    
   end
   
   it "should convert keys to proper format" do
@@ -104,7 +104,7 @@ describe HighChartsHelper do
 
   # issue #62 .js_code setting ignored
   # https://github.com/michelson/lazy_high_charts/issues/62
-  it "should allow js code in array && nest attributs" do
+  it "should allow js code in array && nest attributes" do
     chart = LazyHighCharts::HighChart.new {|f|
       f.yAxis([{
         :labels => {
@@ -112,7 +112,7 @@ describe HighChartsHelper do
               }
       }])
     }
-    high_chart(@placeholder,chart).should match(/"formatter": function\(\) {return this.value \+ ' W';}/)
+    high_chart(@placeholder,chart).should match(/"formatter":function\(\) {return this.value \+ ' W';}/)
   end
 
   it "should support js_code in Individual data label for each point" do
@@ -129,7 +129,7 @@ describe HighChartsHelper do
         :y => 54.4}
         ])
     }
-    high_chart(@placeholder,chart).should match(/"formatter": function\(\) {\ return this.x;\ }/)
+    high_chart(@placeholder,chart).should match(/"formatter":function\(\) {\ return this.x;\ }/)
   end
 
 end

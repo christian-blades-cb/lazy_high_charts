@@ -1,15 +1,6 @@
 # coding: utf-8
-
-class String
-  def camelize(uppercase_first_letter = true)
-    if uppercase_first_letter then
-      self.sub!(%r{^[a-z\d]*}) { inflections.acronyms[$&] || $&.capitalize }
-    else
-      self.sub!(%r{^(?:#{inflections.acronym_regex}(?=\b|[A-Z_])|\w)}) { $&.downcase }
-    end
-    self.gsub!(%r{(?:_|(\/))([a-z\d]*)}) { "#{$1}#{inflections.acronyms[$2] || $2.capitalize}" }.gsub!('/', '::')
-  end
-end
+require 'json'
+require 'erb'
 
 module LazyHighCharts
   module LayoutHelper
@@ -35,8 +26,8 @@ module LazyHighCharts
     end
 
     def build_html_output(type, placeholder, object, &block)
-      options_collection =  [ generate_json_from_hash(OptionsKeyFilter.filter(object.options)) ]
-      options_collection << %|"series": [#{generate_json_from_array(object.data)}]|
+      options_collection =  [ OptionsKeyFilter.filter(object.options).deep_camelize.to_json ]
+      options_collection << %|"series": [#{object.data.to_json}]|
 
       core_js =<<-EOJS
         var options = { #{options_collection.join(',')} };
@@ -93,31 +84,19 @@ module LazyHighCharts
       end
 
     end
-    
+
     private
 
-    def generate_json_from_hash hash
-      hash.each_pair.map do |key, value|
-        k = key.to_s.camelize.gsub!(/\b\w/) { $&.downcase }
-        %|"#{k}": #{generate_json_from_value value}|
-      end.flatten.join(',')
-    end
-
-    def generate_json_from_value value
-      if value.is_a? Hash
-        %|{ #{generate_json_from_hash value} }|
-      elsif value.is_a? Array
-        %|[ #{generate_json_from_array value} ]|
-      elsif value.respond_to?(:js_code) && value.js_code?
-        value
+    def content_tag(name, content = nil, options = nil)
+      if options
+        options_string = options.map { |k,v| %|#{k}="#{ERB::Util.h(v)}"| }.join(" ")
       else
-        value.to_json
+        options_string = ""
       end
-    end
 
-    def generate_json_from_array array
-      array.map{|value| generate_json_from_value(value)}.join(",")
+      "<#{name} #{options_string}>#{content}</#{name}>"
     end
     
+        
   end
 end

@@ -14,6 +14,7 @@ module LazyHighCharts
     end
 
     def self.date_to_js_code date
+      date = Time.at(date / 1000) if date.is_a?(Integer)
       "Date.UTC(#{date.year}, #{date.month - 1}, #{date.day})".js_code
     end
 
@@ -25,7 +26,7 @@ module LazyHighCharts
           FILTER_MAP.each_pair do |method, matchers|
             v = method.call(v) if matchers.include?(k)
           end
-        end
+        end        
         [k, v]
       end
       Hash[new_options]
