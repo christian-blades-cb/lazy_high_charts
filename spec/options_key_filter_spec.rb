@@ -16,6 +16,12 @@ describe LazyHighCharts::OptionsKeyFilter do
       @value.should == "Date.UTC(2012, 8, 13)"
     end
 
+    it "should be a more precise JavaScript Date if more precision in provided date is available" do
+      hash = LazyHighCharts::OptionsKeyFilter.filter(pointStart: DateTime.new(2013, 2, 23, 14, 33))
+      @value = hash[:pointStart]
+      @value.should == "Date.UTC(2013, 1, 23, 14, 33)"
+    end
+
     it "should be js_code" do
       @value.js_code?.should be_true
     end
