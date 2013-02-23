@@ -26,11 +26,10 @@ module LazyHighCharts
     end
 
     def build_html_output(type, placeholder, object, &block)
-      options_collection =  [ OptionsKeyFilter.filter(object.options).deep_camelize.to_json ]
-      options_collection << %|"series": [#{object.data.to_json}]|
-
+      options_collection = {"series" => object.data}.merge OptionsKeyFilter.filter(object.options).deep_camelize
+      puts options_collection.to_json
       core_js =<<-EOJS
-        var options = { #{options_collection.join(',')} };
+        var options = #{options_collection.to_json};
         #{capture(&block) if block_given?}
         window.chart_#{placeholder} = new Highcharts.#{type}(options);
       EOJS
@@ -40,16 +39,6 @@ module LazyHighCharts
         <script type="text/javascript">
         (function() {
           #{core_js}
-        })()
-        </script>
-        EOJS
-      elsif defined?(Turbolinks) && request.headers["X-XHR-Referer"]
-        graph =<<-EOJS
-        <script type="text/javascript">
-        (function() {
-          $(window).bind('page:load', function() {
-            #{core_js}
-          });
         })()
         </script>
         EOJS
