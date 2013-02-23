@@ -15,7 +15,12 @@ module LazyHighCharts
 
     def self.date_to_js_code date
       date = Time.at(date / 1000) if date.is_a?(Integer)
-      "Date.UTC(#{date.year}, #{date.month - 1}, #{date.day})".js_code
+      js_date = "Date.UTC(#{date.year}, #{date.month - 1}, #{date.day})"
+      js_date = js_date.sub(')', ', ') + "#{date.strftime('%H')})" if date.strftime('%H').to_i != 0
+      js_date = js_date.sub(')', ', ') + "#{date.strftime('%M')})" if date.strftime('%M').to_i != 0
+      js_date = js_date.sub(')', ', ') + "#{date.strftime('%S')})" if date.strftime('%S').to_i != 0
+      js_date.js_code
+      #"Date.UTC(#{date.year}, #{date.month - 1}, #{date.day}, #{date.strftime('%I')}, #{date.strftime('%M')}, #{date.strftime('%S')})".js_code
     end
 
     def self.filter options
