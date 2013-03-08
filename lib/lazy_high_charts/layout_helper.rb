@@ -27,7 +27,7 @@ module LazyHighCharts
 
     def build_html_output(type, placeholder, object, &block)
       options_collection = {"series" => object.data}.merge OptionsKeyFilter.filter(object.options).deep_camelize
-      puts options_collection.to_json
+
       core_js =<<-EOJS
         var options = #{options_collection.to_json};
         #{capture(&block) if block_given?}
